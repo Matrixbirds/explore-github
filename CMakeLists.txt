@@ -1,0 +1,10 @@
+cmake_minimum_required (VERSION 3.12.4)
+project (explore-github)
+set(CMAKE_C_COMPILER g++)
+add_compile_options(-std=c++11)
+
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIRS})
+#add_library(explore SHARED main.cpp)
+add_executable(explore.exe main.cpp)
+target_link_libraries(explore.exe ${CURL_LIBRARIES})
