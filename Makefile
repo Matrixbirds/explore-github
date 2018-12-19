@@ -123,6 +123,32 @@ explore.exe/fast:
 	$(MAKE) -f CMakeFiles/explore.exe.dir/build.make CMakeFiles/explore.exe.dir/build
 .PHONY : explore.exe/fast
 
+#=============================================================================
+# Target rules for targets named rapidJson-build
+
+# Build rule for target.
+rapidJson-build: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rapidJson-build
+.PHONY : rapidJson-build
+
+# fast build rule for target.
+rapidJson-build/fast:
+	$(MAKE) -f CMakeFiles/rapidJson-build.dir/build.make CMakeFiles/rapidJson-build.dir/build
+.PHONY : rapidJson-build/fast
+
+#=============================================================================
+# Target rules for targets named rapidJson
+
+# Build rule for target.
+rapidJson: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rapidJson
+.PHONY : rapidJson
+
+# fast build rule for target.
+rapidJson/fast:
+	$(MAKE) -f CMakeFiles/rapidJson.dir/build.make CMakeFiles/rapidJson.dir/build
+.PHONY : rapidJson/fast
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -159,6 +185,8 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... explore.exe"
+	@echo "... rapidJson-build"
+	@echo "... rapidJson"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
