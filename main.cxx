@@ -34,11 +34,11 @@
 #error "upgrade your libcurl to no less than 7.12.3"
 #endif
 
+#include <iostream>
+#include "color.hxx"
 
 namespace github {};
 
-#include <iostream>
-#include "color.hxx"
 using namespace std;
 using namespace rapidjson;
 using namespace github;
