@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <cstdio>
 
 #include <curl/curl.h>
 
@@ -16,6 +17,8 @@
 #include <rapidjson/writer.h>
 
 #include <fstream>
+#include <vector>
+#include <unordered_map>
 
 #ifdef WIN32
 #include <fcntl.h>
@@ -39,29 +42,78 @@ using namespace rapidjson;
 using namespace github;
 
 namespace github {
+    namespace util {
+        enum queryType {
+            INT,
+            STRING,
+            ARRAY,
+            OBJECT
+        };
+    }
+
+    void log(const Value& it, const unordered_map<string, util::queryType>& attrs) {
+        for (auto& _: attrs) {
+            const char *key = _.first.c_str();
+            switch (_.second) {
+                cout << _.first << ": ";
+                case util::queryType::INT:
+                    cout << key << ": " << it[key].GetInt() << endl;
+                break;
+                case util::queryType::STRING:
+                    cout << key << ": " << it[key].GetString() << endl;
+                break;
+                // ## NEED TEST
+                case util::queryType::ARRAY:
+                    for (const auto& item : it[key].GetArray())
+                        github::log(item, attrs);
+                break;
+                // ## NEED TEST
+                case util::queryType::OBJECT:
+                    for (const auto& item : it[key].GetObject())
+                        cout << item.name.GetString() << ": " << item.value.GetString() << endl;
+                break;
+            }
+        }
+    }
+
     class Repository {
         public:
-            Repository(string &name, string &url, unsigned &stars) : name_(name) , url_(url), stars_(stars) {}
-            Repository(const Repository& ins) : name_(ins.name_) , url_(ins.url_), stars_(ins.stars_) {}
-            virtual ~Repository();
+            Repository(string& name, string& url,
+                unsigned& stars, string& description) :
+                name_(name) , url_(url), stars_(stars),
+                description_(description)
+                {}
+            Repository(const Repository& ins) :
+                name_(ins.name_) , url_(ins.url_), stars_(ins.stars_),
+                description_(ins.description_)
+                {}
+            ~Repository() {}
 
             Repository& operator=(const Repository& _rval) {
                 name_ = _rval.name_;
                 url_= _rval.url_;
                 stars_= _rval.stars_;
+                description_= _rval.description_;
                 return *this;
             }
 
-        protected:
             template <typename Writer>
             void Serialize(Writer& writer) const {
+                writer.StartObject();
                 writer.String("name");
+                writer.String(name_);
                 writer.String("url");
+                writer.String(url_);
                 writer.String("stars");
+                writer.Uint(stars_);
+                writer.String("description");
+                writer.String(description_);
+                writer.EndObject();
             }
         private:
             std::string name_;
             std::string url_;
+            std::string description_;
             unsigned stars_;
     };
 }
@@ -123,9 +175,32 @@ int doRequest(const char **argv) {
      * cout << "Access values." << endl;
      */
     //const Value& items = doc["items"][0];
-    OStreamWrapper osw(cout);
-    PrettyWriter<OStreamWrapper> writer(osw);
-    doc.Accept(writer);
+    //OStreamWrapper osw(cout);
+    //PrettyWriter<OStreamWrapper> writer(osw);
+    String
+    PrettyWriter<StringBuffer> writer(osw);
+
+    const Value& items = doc["items"];
+    assert(items.IsArray());
+    vector <Repository> repos;
+    const unordered_map<string, util::queryType> attrs({
+            {"name", util::queryType::STRING},
+            {"url", util::queryType::STRING},
+            {"stargazers_count", util::queryType::INT},
+            {"description", util::queryType::STRING}
+    });
+    for (const auto& item : items.GetArray()) {
+        string name = item["name"].GetString();
+        string url = item["url"].GetString();
+        unsigned int stars = item["stargazers_count"].GetInt();
+        string description = item["description"].GetString();
+        repos.push_back(Repository(name, url, stars, description));
+        github::log(item, attrs);
+    }
+    if (repos[0]) {
+        repos[0].Serialize(writer);
+    }
+    //doc["items"].Accept(writer);
     return 0;
 }
 

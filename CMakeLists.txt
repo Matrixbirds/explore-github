@@ -3,6 +3,10 @@ project (explore-github)
 set(CMAKE_C_COMPILER g++)
 set(VENDOR_PATH ${PROJECT_SOURCE_DIR}/vendor)
 add_compile_options(-std=c++11)
+#add_compile_options(-Wc++11-extensions)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
 
 include(ExternalProject)
 
