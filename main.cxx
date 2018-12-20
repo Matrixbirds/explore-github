@@ -38,6 +38,7 @@
 namespace github {};
 
 #include <iostream>
+#include "color.hxx"
 using namespace std;
 using namespace rapidjson;
 using namespace github;
@@ -245,6 +246,8 @@ void program(int num, const char **argv) {
 }
 
 int main(int argc, const char *argv[]) {
+    ColorStream s;
+    s << "Hello ColorStream" << endl;
     if (argc < 2) {
         show_usage(argv);
     } else {

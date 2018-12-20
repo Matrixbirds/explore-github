@@ -32,5 +32,5 @@ set_property(DIRECTORY PROPERTY COMPILE_OPTIONS ${EXTRA_CXX_FLAGS})
 
 set(LIBS ${RAPIDJSONPATH}/include)
 #add_library(explore SHARED main.cpp)
-add_executable(explore.exe main.cpp)
+add_executable(explore.exe main.cxx color.hxx)
 target_link_libraries(explore.exe ${CURL_LIBRARIES})
